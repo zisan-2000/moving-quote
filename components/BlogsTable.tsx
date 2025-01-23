@@ -2,41 +2,55 @@
 import { postdata } from "@/app/(main)/data/postdata";
 import React, { useState } from "react";
 import Link from "next/link";
-import { Editor } from "@tinymce/tinymce-react";
 import RichTextEditor from "./RichTextEditor";
 
+// Define TypeScript interface for blog posts
+interface BlogPost {
+  ID: number;
+  post_title: string;
+  post_content: string;
+  post_status: string;
+  comment_status: string;
+}
+
 const AllBlogs: React.FC = () => {
-  const [selectedBlog, setSelectedBlog] = useState(null); // State to manage the blog being edited
-  const [formData, setFormData] = useState({
+  const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
+  const [formData, setFormData] = useState<BlogPost>({
+    ID: 0,
     post_title: "",
     post_content: "",
+    post_status: "Draft",
+    comment_status: "Open",
   });
-  const [posts, setPosts] = useState(postdata); // Manage posts state to simulate deletion
-  const [newPost, setNewPost] = useState({
+
+  const [posts, setPosts] = useState<BlogPost[]>(postdata);
+  const [newPost, setNewPost] = useState<Omit<BlogPost, "ID">>({
     post_title: "",
     post_content: "",
+    post_status: "Draft",
+    comment_status: "Open",
   });
+
   const [isModalOpen, setIsModalOpen] = useState(false); // Manage modal visibility
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
 
-  const handleEdit = (blog: any) => {
-    // Set the blog being edited and populate the form
+  const handleEdit = (blog: BlogPost) => {
     setSelectedBlog(blog);
     setFormData({
+      ID: blog.ID,
       post_title: blog.post_title,
       post_content: blog.post_content,
+      post_status: blog.post_status,
+      comment_status: blog.comment_status,
     });
   };
 
   const handleDelete = (id: number) => {
-    // Show confirmation alert before deleting
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this blog post?"
     );
     if (confirmDelete) {
-      // Filter out the post with the given ID
-      const updatedPosts = posts.filter((blog) => blog.ID !== id);
-      setPosts(updatedPosts);
+      setPosts(posts.filter((blog) => blog.ID !== id));
       alert("Blog post deleted successfully!");
     }
   };
@@ -65,15 +79,18 @@ const AllBlogs: React.FC = () => {
 
   const handleAddNewPost = (e: React.FormEvent) => {
     e.preventDefault();
-    const newPostData = {
+    const newPostData: BlogPost = {
       ...newPost,
       ID: posts.length + 1,
-      post_status: "Draft",
-      comment_status: "Open",
     };
     setPosts([...posts, newPostData]);
-    setNewPost({ post_title: "", post_content: "" }); // Reset form
-    setIsModalOpen(false); // Close modal after adding post
+    setNewPost({
+      post_title: "",
+      post_content: "",
+      post_status: "Draft",
+      comment_status: "Open",
+    });
+    setIsModalOpen(false);
     alert("New post added successfully!");
   };
 
@@ -83,27 +100,28 @@ const AllBlogs: React.FC = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold">Blog Management: {filteredPosts.length}</h1>
-
+      <h1 className="text-2xl font-bold">
+        Blog Management: {filteredPosts.length}
+      </h1>
 
       {/* Aligning Add New Post Button to the Left */}
       <div className="flex justify-end mb-6">
-      <div>
-      <input
-          type="text"
-          placeholder="Search blogs by title..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-auto mt-8 p-2 mr-4 border rounded"
-        />
-      </div>
+        <div>
+          <input
+            type="text"
+            placeholder="Search blogs by title..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-auto mt-8 p-2 mr-4 border rounded"
+          />
+        </div>
         <div className="mt-8">
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-        >
-          Add New Post
-        </button>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          >
+            Add New Post
+          </button>
         </div>
       </div>
 

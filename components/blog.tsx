@@ -2,6 +2,15 @@
 import { useEffect, useState } from "react";
 import { postdata } from "@/app/(main)/data/postdata";
 import Link from "next/link";
+import Image from "next/image";
+
+// Define TypeScript Interface for Blog
+interface Blog {
+  ID: number;
+  post_title: string;
+  post_content: string;
+  imageUrl?: string;
+}
 
 // Function to extract the first image's src from the post_content
 const extractFirstImage = (htmlContent: string): string => {
@@ -10,17 +19,19 @@ const extractFirstImage = (htmlContent: string): string => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlContent, "text/html");
     const imgElement = doc.querySelector("img");
-    return imgElement ? imgElement.getAttribute("src") ?? placeholderImage : placeholderImage;
+    return imgElement
+      ? imgElement.getAttribute("src") ?? placeholderImage
+      : placeholderImage;
   }
   return placeholderImage;
 };
 
 const BlogSection = () => {
-  const [blogCards, setBlogCards] = useState<any[]>([]);
+  const [blogCards, setBlogCards] = useState<Blog[]>([]); // ✅ Replaced `any[]` with `Blog[]`
 
   useEffect(() => {
     // Process postdata client-side to extract images
-    const processedData = postdata.slice(1, 4).map((blog) => ({
+    const processedData: Blog[] = postdata.slice(1, 4).map((blog) => ({
       ...blog,
       imageUrl: extractFirstImage(blog.post_content),
     }));
@@ -36,9 +47,12 @@ const BlogSection = () => {
             key={index}
             className="border border-gray-700 bg-gray-900 p-6 text-center shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300"
           >
-            <img
-              src={blog.imageUrl}
+            {/* ✅ Replaced <img> with Next.js <Image /> */}
+            <Image
+              src={blog.imageUrl ?? "https://via.placeholder.com/400x200"}
               alt={blog.post_title}
+              width={400}
+              height={200}
               className="w-full h-40 object-cover rounded-md mb-4"
             />
             <h3 className="text-xl font-bold text-yellow-400 mb-4">

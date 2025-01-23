@@ -1,15 +1,23 @@
-'use client';
+"use client";
 import React, { useState } from "react";
 import { postdata } from "@/app/(main)/data/postdata";
 import { FaBlog, FaFileAlt, FaComments, FaHeart } from "react-icons/fa"; // Importing icons
 import BlogPostForm from "@/components/blogForm";
 
+// Define Blog Type
+interface Blog {
+  ID: number;
+  post_title: string;
+  post_status: string;
+  comment_status: string;
+}
+
 const Dashboard = () => {
   const [isFormVisible, setFormVisible] = useState(false); // State to toggle the form visibility
-  const [selectedBlog, setSelectedBlog] = useState(null); // State for the blog being edited
+  const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null); // Use defined Blog type instead of any
 
   // Function to open the form modal
-  const openForm = (blog = null) => {
+  const openForm = (blog: Blog | null = null) => {
     setSelectedBlog(blog);
     setFormVisible(true);
   };
@@ -92,7 +100,9 @@ const Dashboard = () => {
             onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
           >
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium">{selectedBlog ? "Edit Blog" : "Create a New Blog"}</h3>
+              <h3 className="text-lg font-medium">
+                {selectedBlog ? "Edit Blog" : "Create a New Blog"}
+              </h3>
               <button
                 onClick={closeForm}
                 className="text-red-500 text-xl font-semibold"
@@ -109,11 +119,11 @@ const Dashboard = () => {
 };
 
 // Stat Card Component
-const StatCard: React.FC<{ title: string; value: string | number; icon: React.ReactNode }> = ({
-  title,
-  value,
-  icon,
-}) => (
+const StatCard: React.FC<{
+  title: string;
+  value: string | number;
+  icon: React.ReactNode;
+}> = ({ title, value, icon }) => (
   <div className="bg-white p-4 rounded-lg shadow flex items-center">
     <div className="p-3 bg-gray-100 rounded-lg mr-4">{icon}</div>
     <div>
@@ -124,7 +134,9 @@ const StatCard: React.FC<{ title: string; value: string | number; icon: React.Re
 );
 
 // Blog List Component
-const BlogList: React.FC<{ openForm: (blog: any) => void }> = ({ openForm }) => {
+const BlogList: React.FC<{ openForm: (blog: Blog) => void }> = ({
+  openForm,
+}) => {
   const blogs = postdata.slice(0, 8);
 
   return (
@@ -137,6 +149,13 @@ const BlogList: React.FC<{ openForm: (blog: any) => void }> = ({ openForm }) => 
               {blog.post_status} Comments • {blog.comment_status} Views
             </p>
           </div>
+          {/* Call openForm when clicking on a blog */}
+          <button
+            onClick={() => openForm(blog)}
+            className="text-blue-500 hover:underline"
+          >
+            Edit
+          </button>
         </li>
       ))}
     </ul>

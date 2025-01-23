@@ -1,5 +1,3 @@
-
-
 import { Mail, Phone, MapPin } from "lucide-react";
 
 const ContactPage: React.FC = () => {
@@ -9,7 +7,8 @@ const ContactPage: React.FC = () => {
       <header className="bg-gray-900 py-10 text-center">
         <h1 className="text-4xl font-bold mb-4">Get in Touch</h1>
         <p className="text-lg text-gray-400">
-          We'd love to hear from you! Whether you have a question or just want to say hello.
+          We&apos;d love to hear from you! Whether you have a question or just
+          want to say hello.
         </p>
       </header>
 
@@ -92,15 +91,15 @@ const ContactPage: React.FC = () => {
                 <MapPin className="w-6 h-6 text-orange-500" />
                 <div>
                   <p className="text-lg font-medium">Address</p>
-                  <p className="text-gray-400">123 Main Street, New York, NY 10001</p>
+                  <p className="text-gray-400">
+                    123 Main Street, New York, NY 10001
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-    
     </div>
   );
 };
